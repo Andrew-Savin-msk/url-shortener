@@ -1,9 +1,9 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
@@ -23,18 +23,21 @@ type HTTPServer struct {
 }
 
 func MustLoad() *Config {
-	// Загружаем переменные окружения из файла .env
-	err := godotenv.Load("C:/Users/User/GoProjects/url-shortener/local.env")
+
+	currentDir, err := os.Getwd()
 	if err != nil {
-		fmt.Println("Error loading local.env file")
+		log.Fatal("Error getting current directory:", err)
+	}
+
+	//Загружаем переменные окружения из файла .env
+	err = godotenv.Load(filepath.Join(currentDir[0:len(currentDir)-18], "local.env"))
+	if err != nil {
+		log.Fatal("Error loading local.env file whith error:", err)
 		// обработка ошибки
 	}
 
-	// // Теперь вы можете использовать переменные окружения
-	// configPath := os.Getenv("CONFIG_PATH")
-	// fmt.Println("CONFIG_PATH:", configPath)
-
-	configPath := os.Getenv("CONFIG_PATH")
+	// Теперь вы можете использовать переменные окружения
+	configPath := filepath.Join(currentDir[0:len(currentDir)-18], os.Getenv("CONFIG_PATH"))
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")
 	}
@@ -44,8 +47,6 @@ func MustLoad() *Config {
 	}
 
 	var cfg Config
-
-	// fmt.Println(configPath)
 
 	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
 		log.Fatal("cannot read config: %s", err)
