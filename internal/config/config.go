@@ -23,25 +23,20 @@ type HTTPServer struct {
 }
 
 func MustLoad() *Config {
-
 	currentDir, err := os.Getwd()
 	if err != nil {
 		log.Fatal("Error getting current directory:", err)
 	}
-
 	//Загружаем переменные окружения из файла .env
 	err = godotenv.Load(filepath.Join(currentDir[0:len(currentDir)-18], "local.env"))
 	if err != nil {
 		log.Fatal("Error loading local.env file whith error:", err)
-		// обработка ошибки
 	}
-
 	// Теперь вы можете использовать переменные окружения
 	configPath := filepath.Join(currentDir[0:len(currentDir)-18], os.Getenv("CONFIG_PATH"))
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is not set")
 	}
-	// check if file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Fatal("config file does not exist: %s", configPath)
 	}
