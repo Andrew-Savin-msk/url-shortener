@@ -23,16 +23,15 @@ func New(storagePath string) (*Storage, error) {
 	// https://my.sh/sqlite
 	// protocol://domen/alias
 
-	stmt, err := db.Prepare(
-		`CREATE TABLE IF NOT EXISTS url(
-			id INTEGER PRIMARY KEY
-			alias TEXT NOT NULL UNIQUE
+	stmt, err := db.Prepare(`
+		CREATE TABLE IF NOT EXISTS url(
+			id INTEGER PRIMARY KEY,
+			alias TEXT NOT NULL UNIQUE,
 			url TEXT NOT NULL
-		)
+		);
 		CREATE INDEX IF NOT EXISTS indx_alias ON url(alias);
 	`)
 	if err != nil {
-		fmt.Println(stmt)
 		return nil, fmt.Errorf("%s: %w, error with creating", op, err)
 	}
 
