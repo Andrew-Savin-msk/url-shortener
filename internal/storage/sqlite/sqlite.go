@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3" // init ssqlite3 driver
+	_ "github.com/mattn/go-sqlite3" // init sqlite3 driver
 )
 
 type Storage struct {
@@ -16,7 +16,7 @@ func New(storagePath string) (*Storage, error) {
 
 	db, err := sql.Open("sqlite3", "./url-shortener.db")
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w, error whith opening", op, err)
 	}
 
 	// https://www.dfkg.com/tyvubiunoipmo
@@ -32,12 +32,13 @@ func New(storagePath string) (*Storage, error) {
 		CREATE INDEX IF NOT EXISTS indx_alias ON url(alias);
 	`)
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		fmt.Println(stmt)
+		return nil, fmt.Errorf("%s: %w, error with creating", op, err)
 	}
 
 	_, err = stmt.Exec()
 	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w, error with starting", op, err)
 	}
 
 	return &Storage{db: db}, nil
