@@ -6,6 +6,9 @@ import (
 	"url/internal/config"
 	"url/internal/lib/logger/sl"
 	"url/internal/storage/sqlite"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 const (
@@ -28,22 +31,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	id, err := storage.SaveURL("https://google.com", "google")
-	if err != nil {
-		log.Error("failed to save url", sl.Err((err)))
-		os.Exit(1)
-	}
+	// id, err := storage.SaveURL("https://google.com", "google")
+	// if err != nil {
+	// 	log.Error("failed to save url", sl.Err(err))
+	// 	os.Exit(1)
+	// }
 
-	id, err = storage.SaveURL("https://google.com", "google")
-	if err != nil {
-		log.Error("failed to save url", sl.Err((err)))
-		os.Exit(1)
-	}
-
-	log.Info("saved url", slog.Int64("id:", id))
+	// fmt.Println(id)
 
 	_ = storage
-	// TODO: init router: chi, chi render
+	// ЧТо такое роутер и зачем это?
+	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
 
 	// TODO: init server:
 }
