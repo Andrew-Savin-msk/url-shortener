@@ -39,11 +39,20 @@ func main() {
 
 	// fmt.Println(id)
 
+	// alias := "google"
+
+	// err = sqlite.DeleteURL(alias)
+	// if err != nil {
+	// 	log.Error("failed to delete url", sl.Err(err))
+	// 	os.Exit(1)
+	// }
+
 	_ = storage
 	// ЧТо такое роутер и зачем это?
 	router := chi.NewRouter()
+	// middleware
 	router.Use(middleware.RequestID)
-
+	router.Use(middleware.Logger)
 	// TODO: init server:
 }
 

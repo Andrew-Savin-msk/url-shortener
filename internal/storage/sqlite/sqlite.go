@@ -68,12 +68,12 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 	}
 
 	id, err := res.LastInsertId()
-	//ATTENTION DEBUG
-	fmt.Println(id)
+	// ATTENTION DEBUG
+	// fmt.Println(id)
 	if err != nil {
 		return 0, fmt.Errorf("%s: failed to get last insert id: %w", op, err)
 	}
-	return 0, nil
+	return id, nil
 }
 
 func (s *Storage) GetURL(alias string) (string, error) {
@@ -98,4 +98,20 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	return resURL, nil
 }
 
-// TODO: func (s *Storage) DeleteURL(alias string) error
+func (s *Storage) DeleteURL(alias string) error {
+	const op = "storage.sqlite.DeleteURL"
+
+	stmt, err := s.db.Prepare("DELETE FROM url WHERE alias = ?")
+	if err != nil {
+		return fmt.Errorf("%s: deleting statment: %w", op, err)
+	}
+
+	_, err = stmt.Exec(alias)
+	if err != nil {
+		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			return fmt.Errorf("%s: %w", op, storage.ErrURLNotFound)
+		}
+		return fmt.Errorf("%s: %w On exec", op, err)
+	}
+	return nil
+}
